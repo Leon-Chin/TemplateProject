@@ -1,45 +1,42 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import "./index.less"
-import { DatabaseOutlined, PieChartOutlined, FileTextOutlined, SolutionOutlined } from '@ant-design/icons';
-import { Layout, Menu, theme, Avatar, Popover, Button } from 'antd';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useIntl } from 'react-intl';
+import { Layout, Menu, theme, } from 'antd';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import MyLayoutHeader from './header';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCollapsed } from '@/store/account.store'
-
+import { setCollapsed } from '@/store/configuration.store'
+import { DatabaseOutlined, HomeOutlined, MoneyCollectFilled, MoneyCollectOutlined, SettingOutlined, WalletOutlined } from '@ant-design/icons';
 
 const { Content, Sider } = Layout;
-const getItem = (label, key, icon, children) => {
-  return { key, icon, children, label }
-}
 
 const Dashboard = () => {
-  const { formatMessage } = useIntl()
+  const getItem = (label, router, icon, children) => {
+    return { key: router, icon, children, label }
+  }
   const mySidebarOptions = [
-    getItem(formatMessage({ id: 'app.dashboard.menu.statistic' }), '/statistic', <PieChartOutlined />),
-    getItem(formatMessage({ id: 'app.dashboard.menu.report' }), '/report', <FileTextOutlined />),
-    getItem(formatMessage({ id: 'app.dashboard.menu.manage' }), '/manage', <DatabaseOutlined />, [
-      getItem(formatMessage({ id: 'app.dashboard.menu.manageTutorial' }), '/manage/tutorial'),
-      getItem(formatMessage({ id: 'app.dashboard.menu.manageMusic' }), '/manage/music'),
-    ]),
-    getItem(formatMessage({ id: 'app.dashboard.menu.feedback' }), '/feedback', <SolutionOutlined />),
+    getItem("Home", '/home', <HomeOutlined />),
+    getItem("Statistic", '/statistic', <DatabaseOutlined />),
+    getItem("Loan", '/loan', <MoneyCollectOutlined />),
+    getItem("Savings", '/savings', <MoneyCollectFilled />),
+    getItem("Budget", '/budget', <WalletOutlined />),
+    getItem("Settings", '/settings', <SettingOutlined />),
   ]
+
   const { pathname } = useLocation()
-  const collapsed = useSelector(state => state.account.collapsed)
+  const collapsed = useSelector(state => state.configuration.collapsed)
   const dispatch = useDispatch()
   const { token: { colorBgContainer } } = theme.useToken()
   const navigateTo = useNavigate()
   const menuClick = (e) => navigateTo(e.key)
   useEffect(() => {
-    pathname === '/' && navigateTo('/statistic')
+    pathname === '/' && navigateTo('/home')
   }, [pathname])
   return (
     <Layout className="layout-page" style={{ minHeight: '100vh' }}>
       <MyLayoutHeader />
       <Layout hasSider>
         <Sider style={{ background: colorBgContainer }} collapsible collapsed={collapsed} onCollapse={(value) => dispatch(setCollapsed(value))}>
-          <Menu defaultSelectedKeys={['/statistic']} selectedKeys={[pathname]} mode="inline" items={mySidebarOptions} onClick={menuClick} />
+          <Menu defaultSelectedKeys={['/home']} selectedKeys={[pathname]} mode="inline" items={mySidebarOptions} onClick={menuClick} />
         </Sider>
         <Content className='layout-page-content'>
           <Suspense fallback={null}>

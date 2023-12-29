@@ -14,7 +14,6 @@ export const globalSlice = createSlice({
     },
 });
 
-// 为每个 case reducer 函数生成 Action creators
 export const { setGlobalState } = globalSlice.actions;
 
 export default globalSlice.reducer;

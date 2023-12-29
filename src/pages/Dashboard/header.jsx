@@ -1,26 +1,19 @@
 import { Avatar, Button, Dropdown, Popover } from 'antd'
 import { Header } from 'antd/es/layout/layout'
-import { ReactComponent as LanguageSvg } from '@/assets/header/language.svg';
-import { ReactComponent as EnUsSvg } from '@/assets/header/en_US.svg';
-import { ReactComponent as ZhCnSvg } from '@/assets/header/zh_CN.svg';
 import './index.less'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setLocale, setLogged } from '../../store/account.store'
 import { useNavigate } from 'react-router-dom';
+import { setUser } from '../../store/user.store';
 
 export default function MyLayoutHeader() {
-    const locale = useSelector(state => state.account.locale)
+    const { user: { id, name } } = useSelector(state => state.user)
     const dispatch = useDispatch()
     const navigateTo = useNavigate()
-    const selectLocale = ({ key }) => {
-        dispatch(setLocale(key));
-    };
     const loginStatusDiv = (
         <>
             <Button type="text" danger onClick={() => {
-                dispatch(setLogged(false))
-                localStorage.removeItem('token')
+                dispatch(setUser(null))
                 navigateTo('/login')
             }}>
                 Logout
@@ -30,10 +23,10 @@ export default function MyLayoutHeader() {
     return (
         <Header className='layout-page-header'>
             <div className='layout-page-header-left'>
-                <div className="medal-logo">Medal Admin</div>
+                <div className="medal-logo">Expense Manager</div>
             </div>
             <div className='layout-page-header-right'>
-                <Dropdown
+                {/* <Dropdown
                     menu={{
                         onClick: info => selectLocale(info),
                         items: [
@@ -53,9 +46,9 @@ export default function MyLayoutHeader() {
                     }}
                 >
                     <LanguageSvg id="language-change" />
-                </Dropdown>
+                </Dropdown> */}
                 <Popover placement="bottom" content={loginStatusDiv} trigger="click">
-                    <Avatar className='MyHeader-Avatar' size="large">Admin</Avatar>
+                    <Avatar className='MyHeader-Avatar' size="large">{name}</Avatar>
                 </Popover>
             </div>
         </Header>

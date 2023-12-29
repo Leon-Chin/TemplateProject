@@ -1,10 +1,12 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import accountReducer from './account.store'
+import configuration from './configuration.store'
 import globalReducer from './global.store'
+import userReducer from './user.store'
 
 const rootReducer = combineReducers({
-    account: accountReducer,
+    configuration: configuration,
     global: globalReducer,
+    user: userReducer
 });
 
 export default rootReducer;

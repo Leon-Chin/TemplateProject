@@ -5,14 +5,14 @@ import pngurl3 from '@/assets/pic/tutorial.webp'
 import pngurl4 from '@/assets/pic/game.webp'
 import pngurl5 from '@/assets/pic/workoutPlan.jpg'
 import { useNavigate } from 'react-router-dom'
-import { apiLogin } from '@/api/admin.api.js'
+import { apiLogin } from '@/api/user.api.js'
 import './index.less'
-import { useDispatch, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
-import { setLocale, setLogged } from '@/store/account.store'
-import { checkToken } from '../../api/admin.api'
+import { setUser } from '../../store/user.store'
+// import { checkToken } from '../../api/admin.api'
 export default function Login() {
-    const logged = useSelector(state => state.account.logged)
+    const { user } = useSelector(state => state.user, shallowEqual)
     const navigateTo = useNavigate()
     const dispatch = useDispatch()
     const [focusedname, setFocusedname] = useState(false)
@@ -21,22 +21,20 @@ export default function Login() {
     const [sigInInfo, setSignInInfo] = useState({})
     const activename = focusedname ? 'active' : ''
     const activepassword = focusedpassword ? 'active' : ''
-    const checkLogged = async (token) => {
-        console.log('daioyongle');
-        const res = await checkToken({ token })
-        if (res.logged === true) {
-            dispatch(setLogged(true))
-            navigateTo('/')
-        } else {
-            dispatch(setLogged(false))
-        }
-    }
+    // const checkLogged = async (token) => {
+    //     const res = await checkToken({ token })
+    //     if (res.logged === true) {
+    //         dispatch(setLogged(true))
+    //         navigateTo('/')
+    //     } else {
+    //         dispatch(setLogged(false))
+    //     }
+    // }
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (logged !== true && token) {
-            console.log('daozhele');
-            checkLogged(token)
-        }
+        // const token = localStorage.getItem('token');
+        // if (logged !== true) {
+        //     checkLogged(token)
+        // }
         const timer = window.setInterval(() => {
             setSelectedPic((prev) => {
                 return prev !== 5 ? prev + 1 : 1
@@ -47,15 +45,17 @@ export default function Login() {
         };
     }, []);
     useEffect(() => {
-        logged && navigateTo('/')
-    }, [logged])
+        user && navigateTo('/')
+    }, [user])
 
     const UserSignIn = async () => {
-        const res = await apiLogin(sigInInfo)
-        if (res?.status !== false) {
-            console.log("login", res);
-            dispatch(setLocale(res.admin.locale))
-            localStorage.setItem('token', res.token)
+        const res = await apiLogin({}, sigInInfo)
+        if (res && res.status !== false) {
+            localStorage.setItem('user', res)
+            console.log("user", res);
+            // const user = { ...res, id: 1 } for test
+            // dispatch(setUser(user))
+            dispatch(setUser(res))
             dispatch(setLogged(true))
             navigateTo('/')
         } else {
@@ -74,11 +74,10 @@ export default function Login() {
                         }} autoComplete="off" className='sign-in-form'>
                             <div className='logo'>
                                 {/* img */}
-                                <h4>Medal - FitnessApp</h4>
+                                <h4>Expense Manager</h4>
                             </div>
                             <div className='heading'>
-                                <h2>Admin System<br />管理系统</h2>
-                                {/* <h3>Welcome Back</h3> */}
+                                <h3>Welcome Back</h3>
                             </div>
                             <div className='actual-form'>
                                 <div className='input-wrap'>
@@ -97,11 +96,11 @@ export default function Login() {
                                         autoComplete="off"
                                         required
                                     />
-                                    <label>Admin Account/管理员账号</label>
+                                    <label>Name</label>
                                 </div>
                                 <div className='input-wrap'>
                                     <input
-                                        type='password'
+                                        type='email'
                                         minLength={4}
                                         onFocus={() => setFocusedpassword(true)}
                                         onBlur={({ target: { value } }) => {
@@ -110,14 +109,14 @@ export default function Login() {
                                             }
                                             setFocusedpassword(false)
                                         }}
-                                        onChange={({ target: { value } }) => setSignInInfo({ ...sigInInfo, password: value })}
+                                        onChange={({ target: { value } }) => setSignInInfo({ ...sigInInfo, email: value })}
                                         className={`input-field ${activepassword}`}
                                         autoComplete="off"
                                         required
                                     />
-                                    <label>Password/密码</label>
+                                    <label>Email</label>
                                 </div>
-                                <input type='submit' value="Sign In / 登陆" className='sign-btn' />
+                                <input type='submit' value="Create User" className='sign-btn' />
                             </div>
                         </form>
                     </div>
