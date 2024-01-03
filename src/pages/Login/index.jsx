@@ -53,9 +53,7 @@ export default function Login() {
         const res = await signIn(sigInInfo)
         if (res && res.status !== false) {
             localStorage.setItem('user', res)
-            const user = { ...res, id: 1 }
-            dispatch(setUser(user))
-            // dispatch(setUser(res))
+            dispatch(setUser(res))
             dispatch(setLogged(true))
             navigateTo('/')
         } else {
