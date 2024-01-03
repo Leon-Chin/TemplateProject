@@ -1,27 +1,12 @@
-import * as echarts from 'echarts'
 import COLORS from '../constants/COLORS';
 
 const SimpleLineChartOption = (xArr, yArr, title) => {
     let yarr = yArr.filter(element => element);
-    // let min = Math.min(...yarr) - 1
-    // min = Math.floor(min)
-    // let max = Math.max(...yarr) + 1
-    // max = Math.ceil(max)
     const xaxis = [
         {
             data: yArr,
             type: 'line',
             name: title,
-            areaStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 0.7, [{
-                        offset: 0, color: COLORS.primary // 0% 处的颜色
-                    }, {
-                        offset: 1, color: "#fff"// 100% 处的颜色
-                    }]
-                    ),  //背景渐变色 
-                },
-            },
             smooth: true
         }]
     return {
@@ -58,8 +43,6 @@ const SimpleLineChartOption = (xArr, yArr, title) => {
         },
         yAxis: {
             type: 'value',
-            // min: min,
-            // max: max,
             show: true,
             splitLine: {
                 show: true // Do not show the split lines

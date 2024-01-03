@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { createNewBudget, } from '../../../api/budget.api'
 import { formatDateToMalaysia } from '../../../utils/convertDate'
 import { useSelector } from 'react-redux'
-import { Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message } from 'antd';
+import { Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message, Card } from 'antd';
 import { DownOutlined, FileOutlined, UpOutlined, UploadOutlined } from '@ant-design/icons';
 import COLORS from '../../../constants/COLORS';
 import OneBudgetCard from './OneBudgetCard';
@@ -30,7 +30,7 @@ const AllBudgetsRecords = ({ getAllData, allBudgets }) => {
         <>
             <Row>
                 <Col span={24}>
-                    <div style={{ width: "100%", backgroundColor: "#fff", padding: 10, borderRadius: 10, }}>
+                    <Card bodyStyle={{ width: "100%", padding: 10, borderRadius: 10, }}>
                         <div style={{ width: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
                             <div style={{ fontWeight: 'bold', fontSize: 18 }}>
                                 <FileOutlined /> Total {allBudgets.length} Budgts {collapsed ? <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Collapsed <UpOutlined /></span> : <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Expand <DownOutlined /></span>}
@@ -46,7 +46,7 @@ const AllBudgetsRecords = ({ getAllData, allBudgets }) => {
                         >
                             {allBudgets.map((item, index) => <OneBudgetCard Title={"Budget"} getAllData={getAllData} budget={item} key={index} />)}
                         </Space>}
-                    </div>
+                    </Card>
                 </Col>
             </Row>
             <Modal

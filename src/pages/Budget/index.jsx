@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getBalanceOverview, getBudgetByUserID, getCurrentBudget, } from '../../api/budget.api'
 import { useSelector } from 'react-redux'
-import { Col, Row, Space, Empty } from 'antd';
+import { Col, Row, Space, Empty, Card } from 'antd';
 import SimpleLineChartOption from '../../utils/SimpleLineChartOption';
 import COLORS from '../../constants/COLORS';
 import ReactEcharts from "echarts-for-react";
@@ -9,20 +9,22 @@ import { SimplePieChartOption } from '../../utils/SimplePieChartOption';
 import AllBudgetsRecords from './components/AllBudgetsRecords';
 import TimeBasisBalances from './components/TimeBasisBalances';
 import OneBudgetCard from './components/OneBudgetCard';
+import useUserTheme from '../../hooks/useUserTheme';
 
 function Budget() {
     const { user } = useSelector(state => state.user)
+    const theme = useUserTheme()
     const [allBudgets, setAllBudgets] = useState([])
     const [currentBudget, setCurrentBudget] = useState()
     const [balanceOverview, setBalanceOverview] = useState()
     const [monthlyBalance, setMonthlyBalance] = useState()
     const [dailyBalance, setDailyBalance] = useState()
     const [yearlyBalance, setYearlyBalance] = useState([])
+
     const getOverview = async (userId) => {
         await getBalanceOverview(userId).then(res => {
             if (res && res.status !== false) {
                 const { balanceOverview, monthlyBalance, dailyBalance, yearlyBalance } = res
-                console.log("sssss", res);
                 setBalanceOverview(balanceOverview)
                 setMonthlyBalance(monthlyBalance)
                 setDailyBalance(dailyBalance)
@@ -59,9 +61,8 @@ function Budget() {
         getAllData()
     }, [])
 
-
     return (
-        <div>
+        <>
             <Space
                 direction="vertical"
                 size="small"
@@ -75,28 +76,28 @@ function Budget() {
                 {/* charts */}
                 <Row gutter={10}>
                     <Col span={12}>
-                        <div style={{ width: "100%", backgroundColor: "#fff", height: 300, borderRadius: 10, }}>
-                            {dailyBalance ? dailyBalance && Object.keys(dailyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(dailyBalance), Object.values(dailyBalance), "Daily Balance", null, COLORS.white)} theme={'light'} />
+                        <Card style={{ width: "100%", height: 300, borderRadius: 10, }}>
+                            {dailyBalance ? dailyBalance && Object.keys(dailyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(dailyBalance), Object.values(dailyBalance), "Daily Balance")} theme={theme} />
                                 : <Empty description={"Don't have the today's budget"} />}
-                        </div>
+                        </Card>
                     </Col>
                     <Col span={12}>
-                        <div style={{ width: "100%", backgroundColor: "#fff", height: 300, borderRadius: 10, }}>
-                            {monthlyBalance ? monthlyBalance && Object.keys(monthlyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(monthlyBalance), Object.values(dailyBalance), "Monthly Balance", null, COLORS.white)} theme={'light'} />
+                        <Card style={{ width: "100%", height: 300, borderRadius: 10, }}>
+                            {monthlyBalance ? monthlyBalance && Object.keys(monthlyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(monthlyBalance), Object.values(dailyBalance), "Monthly Balance")} theme={theme} />
                                 : <Empty description={"Don't have the this month's budget"} />}
-                        </div>
+                        </Card>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={24}>
-                        <div style={{ width: "100%", padding: '20px 10%', backgroundColor: "#fff", height: 300, borderRadius: 10, }}>
-                            {yearlyBalance ? yearlyBalance && Object.keys(yearlyBalance) !== 0 && <ReactEcharts option={SimplePieChartOption("Yearly Balances", yearlyBalance)} theme={'light'} />
+                        <Card style={{ width: "100%", padding: '20px 10%', borderRadius: 10, }}>
+                            {yearlyBalance ? yearlyBalance && Object.keys(yearlyBalance) !== 0 && <ReactEcharts option={SimplePieChartOption("Yearly Balances", yearlyBalance)} theme={theme} />
                                 : <Empty description={"Don't have the today's budget"} />}
-                        </div>
+                        </Card>
                     </Col>
                 </Row>
-            </Space>
-        </div >
+            </Space >
+        </ >
     )
 }
 
