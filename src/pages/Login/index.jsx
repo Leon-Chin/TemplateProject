@@ -5,31 +5,32 @@ import pngurl3 from '@/assets/pic/tutorial.webp'
 import pngurl4 from '@/assets/pic/game.webp'
 import pngurl5 from '@/assets/pic/workoutPlan.jpg'
 import { useNavigate } from 'react-router-dom'
-import { apiLogin } from '@/api/user.api.js'
 import './index.less'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
 import { setUser } from '../../store/user.store'
+import { signIn, signUp } from '../../api/user.api'
 // import { checkToken } from '../../api/admin.api'
 export default function Login() {
     const { user } = useSelector(state => state.user, shallowEqual)
     const navigateTo = useNavigate()
     const dispatch = useDispatch()
+    const [signup, setSignup] = useState(false)
     const [focusedname, setFocusedname] = useState(false)
     const [focusedpassword, setFocusedpassword] = useState(false)
+    const [focusednameSup, setFocusednameSup] = useState(false)
+    const [focusedpasswordSup, setFocusedpasswordSup] = useState(false)
+    const [focusedemail, setFocusedemail] = useState(false)
     const [selectedPic, setSelectedPic] = useState(1)
     const [sigInInfo, setSignInInfo] = useState({})
     const activename = focusedname ? 'active' : ''
     const activepassword = focusedpassword ? 'active' : ''
-    // const checkLogged = async (token) => {
-    //     const res = await checkToken({ token })
-    //     if (res.logged === true) {
-    //         dispatch(setLogged(true))
-    //         navigateTo('/')
-    //     } else {
-    //         dispatch(setLogged(false))
-    //     }
-    // }
+
+    const [sigUpInfo, setSignUpInfo] = useState({})
+    const activenameSup = focusednameSup ? 'active' : ''
+    const activepasswordSup = focusedpasswordSup ? 'active' : ''
+    const activeemail = focusedemail ? 'active' : ''
+
     useEffect(() => {
         // const token = localStorage.getItem('token');
         // if (logged !== true) {
@@ -49,13 +50,12 @@ export default function Login() {
     }, [user])
 
     const UserSignIn = async () => {
-        const res = await apiLogin({}, sigInInfo)
+        const res = await signIn(sigInInfo)
         if (res && res.status !== false) {
             localStorage.setItem('user', res)
-            console.log("user", res);
-            // const user = { ...res, id: 1 } for test
-            // dispatch(setUser(user))
-            dispatch(setUser(res))
+            const user = { ...res, id: 1 }
+            dispatch(setUser(user))
+            // dispatch(setUser(res))
             dispatch(setLogged(true))
             navigateTo('/')
         } else {
@@ -63,8 +63,22 @@ export default function Login() {
         }
     }
 
+    const registerUser = async () => {
+        await signUp(sigUpInfo)
+            .then((res) => {
+                dispatch(setUser(res))
+                navigateTo('/')
+                message.success('Register Successfully! Have a nice trip!!!')
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error('Registration Failure! Try again please')
+            })
+    }
+
     return (
-        <div className='loginFrame'>
+
+        <div className={`Login_mainBox ${signup ? 'sign-up-mode' : ''}`}>
             <div className='box'>
                 <div className='inner-box'>
                     <div className='forms-wrap'>
@@ -77,27 +91,11 @@ export default function Login() {
                                 <h4>Expense Manager</h4>
                             </div>
                             <div className='heading'>
-                                <h3>Welcome Back</h3>
+                                <h2>Welcome Back</h2>
+                                <h6>Not registered yet?</h6>
+                                <a className='toggle' onClick={() => setSignup(true)}>&nbsp;Sign up</a>
                             </div>
                             <div className='actual-form'>
-                                <div className='input-wrap'>
-                                    <input
-                                        type='text'
-                                        minLength={4}
-                                        className={`input-field ${activename}`}
-                                        onFocus={() => setFocusedname(true)}
-                                        onBlur={({ target: { value } }) => {
-                                            if (value != "") {
-                                                return;
-                                            }
-                                            setFocusedname(false)
-                                        }}
-                                        onChange={({ target: { value } }) => setSignInInfo({ ...sigInInfo, name: value })}
-                                        autoComplete="off"
-                                        required
-                                    />
-                                    <label>Name</label>
-                                </div>
                                 <div className='input-wrap'>
                                     <input
                                         type='email'
@@ -116,7 +114,97 @@ export default function Login() {
                                     />
                                     <label>Email</label>
                                 </div>
-                                <input type='submit' value="Create User" className='sign-btn' />
+                                <div className='input-wrap'>
+                                    <input
+                                        type='password'
+                                        minLength={4}
+                                        className={`input-field ${activename}`}
+                                        onFocus={() => setFocusedname(true)}
+                                        onBlur={({ target: { value } }) => {
+                                            if (value != "") {
+                                                return;
+                                            }
+                                            setFocusedname(false)
+                                        }}
+                                        onChange={({ target: { value } }) => setSignInInfo({ ...sigInInfo, password: value })}
+                                        autoComplete="off"
+                                        required
+                                    />
+                                    <label>Password</label>
+                                </div>
+                                <input type='submit' value="Sign In" className='sign-btn' />
+                            </div>
+                        </form>
+
+                        <form onSubmit={(e) => {
+                            e.preventDefault()
+                            registerUser()
+                        }} autoComplete="off" className='sign-up-form'>
+                            <div className='logo'>
+                                {/* img */}
+                                <h4>Expense Manager</h4>
+                            </div>
+                            <div className='heading'>
+                                <h2>Start</h2>
+                                <h6>Already have account</h6>
+                                <a className='toggle' onClick={() => setSignup(false)}>&nbsp;Sign In</a>
+                            </div>
+                            <div className='actual-form'>
+                                <div className='input-wrap'>
+                                    <input
+                                        type='text'
+                                        minLength={4}
+                                        className={`input-field ${activenameSup}`}
+                                        onFocus={() => setFocusednameSup(true)}
+                                        onBlur={({ target: { value } }) => {
+                                            if (value != "") {
+                                                return;
+                                            }
+                                            setFocusednameSup(false)
+                                        }}
+                                        onChange={({ target: { value } }) => setSignUpInfo({ ...sigUpInfo, name: value })}
+                                        autoComplete="off"
+                                        required
+                                    />
+                                    <label>Name</label>
+                                </div>
+                                <div className='input-wrap'>
+                                    <input
+                                        type='email'
+                                        minLength={4}
+                                        className={`input-field ${activeemail}`}
+                                        onFocus={() => setFocusedemail(true)}
+                                        onBlur={({ target: { value } }) => {
+                                            if (value != "") {
+                                                return;
+                                            }
+                                            setFocusedemail(false)
+                                        }}
+                                        onChange={({ target: { value } }) => setSignUpInfo({ ...sigUpInfo, email: value })}
+                                        autoComplete="off"
+                                        required
+                                    />
+                                    <label>Email</label>
+                                </div>
+                                <div className='input-wrap'>
+                                    <input
+                                        type='password'
+                                        minLength={4}
+                                        onFocus={() => setFocusedpasswordSup(true)}
+                                        onBlur={({ target: { value } }) => {
+                                            if (value != "") {
+                                                return;
+                                            }
+                                            setFocusedpasswordSup(false)
+                                        }}
+                                        className={`input-field ${activepasswordSup}`}
+                                        autoComplete="off"
+                                        onChange={({ target: { value } }) => setSignUpInfo({ ...sigUpInfo, password: value })}
+                                        required
+                                    />
+                                    <label>Password</label>
+                                </div>
+                                <input type='submit' value={"Sigin up"} className='sign-btn' />
                             </div>
                         </form>
                     </div>

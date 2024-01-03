@@ -1,6 +1,13 @@
 import { request } from './request';
 
-export const apiLogin = (data, params) => request('post', '/user/create', data, { params });
+export const signUp = (params) => request('post', '/user/create', null, { params });
+
+export const signIn = (data) => request('post', '/user/login', data);
+// format
+// {
+//     email:
+//     password:
+// }
 
 
 
