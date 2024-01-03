@@ -47,18 +47,18 @@ function Saving() {
 
     const prepareDataForPieChart = (data) => {
         return data.map(item => ({
-          name: item.category,
-          value: item.savingTotal
+            name: item.category,
+            value: item.savingTotal
         }));
-      };
-      
+    };
+
 
     useEffect(() => {
         getAllData()
     }, [])
 
     return (
-        <>   
+        <>
             <Space
                 direction="vertical"
                 size="small"
@@ -76,7 +76,7 @@ function Saving() {
                         </Card>
                     </Col>
                 </Row>
-            </Space>    
+            </Space>
         </ >
     )
 }

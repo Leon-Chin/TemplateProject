@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNewExpenseCategory, deleteExpenseCategory, getAllExpenseCategory, updateExpenseCategory } from '../../api/setting.api'
+import { createNewExpenseCategory, deleteAllData, deleteExpenseCategory, exportAllData, getAllExpenseCategory, updateExpenseCategory } from '../../api/setting.api'
 import { Button, Card, Col, Input, List, Modal, Radio, Row, Switch, Typography, message } from 'antd'
 import { DeleteOutlined, EditOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons'
 import useUserTheme from '../../hooks/useUserTheme'
@@ -48,7 +48,7 @@ function Setting() {
     }
     useEffect(() => {
         getAllCategory()
-    })
+    }, [])
     const [addModalOpen, setAddModalOpen] = useState(false)
     const [updateModalOpen, setUpdateModalOpen] = useState(false)
     const [selectedCategory, setselectedCategory] = useState()
@@ -57,6 +57,21 @@ function Setting() {
     const dispatch = useDispatch()
     const currentTheme = useUserTheme()
 
+
+    const handleExport = async () => {
+        await exportAllData(user.id).then(res => {
+            if (res && res.status !== false) {
+                console.log(res);
+            }
+        })
+    }
+    const handleDeleteAll = async () => {
+        await deleteAllData(user.id).then(res => {
+            if (res && res.status !== false) {
+                console.log(res);
+            }
+        })
+    }
     return (
         <div>
             <Card bodyStyle={{ padding: 0 }}>
@@ -92,12 +107,12 @@ function Setting() {
             <Row gutter={8}>
                 <Col span={8}>
                     <Card>
-                        <ExportOutlined /> Export Data
+                        <div className='hoverButton' onClick={() => handleExport()}><ExportOutlined /> Export Data</div>
                     </Card>
                 </Col>
                 <Col span={8}>
                     <Card>
-                        <DeleteOutlined /> Delete All Data
+                        <div className='hoverButton' onClick={() => handleDeleteAll()}><DeleteOutlined /> Delete All Data</div>
                     </Card>
                 </Col>
                 <Col span={8}>

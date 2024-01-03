@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { formatDateToMalaysia } from '../../../utils/convertDate'
 import { useSelector } from 'react-redux'
-import { Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message, Select } from 'antd';
+import { Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message, Select, Card } from 'antd';
 import { DownOutlined, FileOutlined, UpOutlined, UploadOutlined } from '@ant-design/icons';
 import COLORS from '../../../constants/COLORS';
 import OneSavingCard from './OneSavingCard';
@@ -29,7 +29,7 @@ const AllSavingsRecords = ({ getAllData, allSavings, allCategories }) => {
         <>
             <Row>
                 <Col span={24}>
-                    <div style={{ width: "100%", backgroundColor: "#fff", padding: 10, borderRadius: 10, }}>
+                    <Card bodyStyle={{ padding: 0 }} style={{ width: "100%", padding: 10, borderRadius: 10, }}>
                         <div style={{ width: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, }}>
                             <div style={{ fontWeight: 'bold', fontSize: 18 }}>
                                 <FileOutlined /> Total {allSavings.length} Savings {collapsed ? <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Collapsed <UpOutlined /></span> : <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Expand <DownOutlined /></span>}
@@ -45,7 +45,7 @@ const AllSavingsRecords = ({ getAllData, allSavings, allCategories }) => {
                         >
                             {allSavings.map((item, index) => <OneSavingCard Title={"Saving"} getAllData={getAllData} saving={item} expenseCategory={item.category} allCategories={allCategories} key={index} />)}
                         </Space>}
-                    </div>
+                    </Card>
                 </Col>
             </Row>
             <Modal
@@ -74,7 +74,7 @@ const AllSavingsRecords = ({ getAllData, allSavings, allCategories }) => {
                         rules={[{ required: true, message: 'Please input saving amount!', }]} >
                         <InputNumber step={0.01} min={0} />
                     </Form.Item>
-                    <Form.Item label="Saving For" name={"category_id"} 
+                    <Form.Item label="Saving For" name={"category_id"}
                         rules={[{ required: true, message: 'Please select category for saving!', }]} >
                         <Select>
                             {allCategories.map(category => (
