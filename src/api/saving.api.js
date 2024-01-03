@@ -1,7 +1,7 @@
 import { request } from './request';
 
-export const createSaving = (data) => request('post', '/savings/create-saving', data);
-export const updateSaving = (savingID) => request('put', `/savings/update-saving/${savingID}`, data);
+export const createNewSaving = (data) => request('post', '/savings/create-saving', data);
+export const updateSaving = (data, saving_id) => request('put', `/savings/update-saving/${saving_id}`, data);
 // data format
 // {
 // user_id: user_id
@@ -13,16 +13,22 @@ export const updateSaving = (savingID) => request('put', `/savings/update-saving
 // }
 
 // /add-more-saving/{saving_id}
-export const addMoreSaving = (savingID, data) => request('put', `/savings/add-more-saving/${savingID}`, data);
+export const addMoreSaving = (data, saving_id) => request('put', `/savings/add-more-saving/${saving_id}`, data);
 // format
 // { saving_val: saving_val }
 
 // /delete-saving/{saving_id}
-export const deleteSaving = (savingID) => request('delete', `/savings/delete-saving/${savingID}`);
+export const deleteSaving = (saving_id) => request('delete', `/savings/delete-saving/${saving_id}`);
 
 // /{saving_id}
-export const getSavingByID = (savingID) => request('get', `/savings/${savingID}`);
+export const getSavingByID = (saving_id) => request('get', `/savings/${saving_id}`);
 
 // /get-by-user/{user_id}
-export const getSavingByUserID = (userID) => request('get', `/savings/get-by-user/${userID}`);
+export const getSavingByUserID = (user_id) => request('get', `/savings/get-by-user/${user_id}`);
+
+//get-all_expense-category
+export const getExpenseCategories = () => request('get', '/expense-category/get-all_expense-category');
+
+//get-total-saving-by-category/{user_id}
+export const getSavingTotalByCategories = (user_id) => request('get', `/savings/get-total-saving-by-category/${user_id}`);
 
