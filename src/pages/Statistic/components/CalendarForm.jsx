@@ -17,7 +17,6 @@ const CalendarForm = ({ handleDateChange }) => {
   };
   
   return (
-    <>
       <div
         style={{
           width: 300,
@@ -34,7 +33,6 @@ const CalendarForm = ({ handleDateChange }) => {
           onPanelChange={onPanelChange}
         />
       </div>
-    </>
   );
 };
 

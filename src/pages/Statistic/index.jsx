@@ -197,9 +197,9 @@ export default function StatisticBoard() {
     getCategory(user.id);
   }, [categorySummaryYear]);
 
-    useEffect(() => {
-      getMonthly(user.id);
-    }, [monthlySummaryYear]);
+  useEffect(() => {
+    getMonthly(user.id);
+  }, [monthlySummaryYear]);
 
   //monthly
   const handleMonthlyDateSelection = (date) => {

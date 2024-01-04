@@ -2,7 +2,6 @@ import { Card, Col, Row } from "antd";
 
 const OverallStatistics = ({ overallStats }) => {
   return (
-    <>
       <Row gutter={[10, 10]}>
         <Col span={8}>
           <Card
@@ -82,7 +81,6 @@ const OverallStatistics = ({ overallStats }) => {
           </Card>
         </Col>
       </Row>
-    </>
   );
 };
 
