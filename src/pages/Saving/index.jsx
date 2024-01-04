@@ -1,75 +1,83 @@
-import React, { useState } from 'react'
-import COLORS from '../../constants/COLORS'
-import { PlusOutlined } from '@ant-design/icons'
-import { Button, DatePicker, Form, Input, InputNumber, Modal, message } from 'antd';
-import { formatDateToMalaysia } from '../../utils/convertDate';
-import { createNewBudget } from '../../api/budget.api';
-import { useSelector } from 'react-redux';
-const { TextArea } = Input;
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { getExpenseCategories, getSavingByUserID, getSavingTotalByCategories } from '../../api/saving.api'
+import AllSavingsRecords from './components/AllSavingsRecords';
+import { Card, Col, Empty, Row, Space } from 'antd';
+import ReactEcharts from "echarts-for-react";
+import { SimplePieChartOption } from '../../utils/SimplePieChartOption';
+import useUserTheme from '../../hooks/useUserTheme';
 
 function Saving() {
     const { user } = useSelector(state => state.user)
-    const [createOpen, setCreateOpen] = useState(false)
-    const onFinishCreate = async (values) => {
-        const startDate = formatDateToMalaysia(new Date(values.startDate))
-        const endDate = formatDateToMalaysia(new Date(values.endDate))
-        const updatedBudget = { ...values, startDate, endDate, userId: user.id }
-        await createNewBudget(updatedBudget).then(res => {
+    const theme = useUserTheme()
+    const [allSavings, setAllSavings] = useState([])
+    const [allCategories, setAllCategories] = useState([])
+    const [allSavingTotalByCategories, setAllSavingTotalByCategories] = useState([])
+
+    const getAllSavings = async (userId) => {
+        await getSavingByUserID(userId).then(res => {
             if (res && res.status !== false) {
-                message.success('Budget create successfully')
-                setCreateOpen(false)
-            } else {
-                console.log(res);
+                setAllSavings(res)
             }
         })
+    }
+
+    const getAllCategories = async () => {
+        await getExpenseCategories().then(res => {
+            if (res && res.status !== false) {
+                setAllCategories(res)
+            }
+        })
+    }
+
+    const getAllSavingTotalByCategories = async (userId) => {
+        await getSavingTotalByCategories(userId).then(res => {
+            if (res && res.status !== false) {
+                setAllSavingTotalByCategories(res)
+            }
+        })
+    }
+
+    const getAllData = () => {
+        const userId = user.id
+        getAllSavings(userId)
+        getAllCategories()
+        getAllSavingTotalByCategories(userId)
+    }
+
+    const prepareDataForPieChart = (data) => {
+        return data.map(item => ({
+            name: item.category,
+            value: item.savingTotal
+        }));
     };
+
+
+    useEffect(() => {
+        getAllData()
+    }, [])
+
     return (
-        <div style={{ position: 'relative' }}>
-
-
-            <div className='hoverButton' onClick={() => setCreateOpen(true)} style={{ position: 'absolute', right: 30, bottom: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.white, width: 60, height: 60, borderRadius: '50%', backgroundColor: COLORS.primary }}>
-                <PlusOutlined style={{ fontSize: 28 }} />
-            </div>
-            <Modal
-                open={createOpen}
-                onCancel={() => setCreateOpen(false)}
-                onOk={() => setCreateOpen(false)}
-                title={"What are you saving for ?"}
-                footer={null}
+        <>
+            <Space
+                direction="vertical"
+                size="small"
+                style={{
+                    display: 'flex',
+                }}
             >
-                <Form
-                    onFinish={onFinishCreate}
-                    labelCol={{ span: 8, }}
-                    wrapperCol={{ span: 16, }}
-                    style={{ maxWidth: 600, }}
-                    autoComplete="off"
-                >
-                    <Form.Item label="name" name="name"
-                        rules={[{ required: true, message: 'Please input budget name!', }]}
-                    >
-                        <Input />
-                    </Form.Item>
+                <AllSavingsRecords allSavings={allSavings} getAllData={getAllData} allCategories={allCategories} />
 
-                    <Form.Item label="Start Date" name={"startDate"}>
-                        <DatePicker format={"DD/MM/YYYY"} />
-                    </Form.Item>
-                    <Form.Item label="End Date" name={"endDate"}>
-                        <DatePicker format={"DD/MM/YYYY"} />
-                    </Form.Item>
-                    <Form.Item label="Budegt Amount" name={"budgetAmount"}>
-                        <InputNumber step={0.01} min={0} />
-                    </Form.Item>
-                    <Form.Item label="comments" name={"comments"}>
-                        <TextArea rows={4} />
-                    </Form.Item>
-                    <Form.Item wrapperCol={{ offset: 8, span: 16, }}>
-                        <Button type="primary" htmlType="submit">
-                            Update
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </div>
+                <Row>
+                    <Col span={24}>
+                        <Card style={{ width: "100%", padding: '20px 10%', borderRadius: 10, }}>
+                            {allSavingTotalByCategories ? allSavingTotalByCategories && Object.keys(allSavingTotalByCategories) !== 0 && <ReactEcharts option={SimplePieChartOption("Saving Total By Categories", prepareDataForPieChart(allSavingTotalByCategories))} theme={theme} />
+                                : <Empty description={"Don't have the saving total by categories"} />}
+                        </Card>
+                    </Col>
+                </Row>
+            </Space>
+        </ >
     )
 }
 

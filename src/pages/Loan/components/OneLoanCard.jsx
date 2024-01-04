@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { deleteLoan, updateLoan } from "../../../api/loan.api";
+import { deleteLoan, updateLoan, getLoanTransactions, recordPayment, recordReception, editLoanTransaction, deleteLoanTransaction } from "../../../api/loan.api";
 import { formatDateToMalaysia } from "../../../utils/convertDate";
-import { Card, Col, Row, Button, InputNumber, DatePicker, Form, Input, message, Popconfirm, Modal, Select, Tag } from "antd";
-import { DeleteOutlined, EditOutlined, ArrowRightOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Card, Col, Row, Button, InputNumber, DatePicker, Form, Input, message, Popconfirm, Modal, Select, Tag, List } from "antd";
+import { DeleteOutlined, EditOutlined, ArrowRightOutlined, ArrowLeftOutlined, InfoCircleOutlined, DollarCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 const { TextArea } = Input;
+import LoanDetailModal from "./LoanDetailModal";
 
 const OneLoanCard = ({ Title, loan, getAllData, setLoanUpdated }) => {
   const { user } = useSelector((state) => state.user);
   const [editOpen, setEditOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [loanTransactions, setLoanTransactions] = useState([]);
   const [form] = Form.useForm();
   const onFinish = async (values) => {
     const date = dayjs(values.date).format("DD-MM-YYYY");
@@ -48,6 +51,14 @@ const OneLoanCard = ({ Title, loan, getAllData, setLoanUpdated }) => {
     form.resetFields();
     setEditOpen(false);
   };
+  // Loan Transaction
+  const handleViewDetails = async () => {
+    const res = await getLoanTransactions(loan.id);
+    if (res && res.status !== false) {
+      setLoanTransactions(res);
+      setDetailOpen(true);
+    }
+  };
   return (
     <Row key={loan}>
       <Col span={24}>
@@ -76,6 +87,9 @@ const OneLoanCard = ({ Title, loan, getAllData, setLoanUpdated }) => {
               <Button size="small" onClick={() => setEditOpen(true)}>
                 <EditOutlined /> Update
               </Button>
+              <Button size="small" onClick={handleViewDetails}>
+                <InfoCircleOutlined /> View Details
+              </Button>
             </div>
           }
         >
@@ -92,7 +106,7 @@ const OneLoanCard = ({ Title, loan, getAllData, setLoanUpdated }) => {
       </Col>
       <Modal open={editOpen} onCancel={handleCancel} onOk={handleCancel} title={"Edit Loan"} footer={null}>
         <Form
-        form={form}
+          form={form}
           onFinish={onFinish}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -140,6 +154,7 @@ const OneLoanCard = ({ Title, loan, getAllData, setLoanUpdated }) => {
           </Form.Item>
         </Form>
       </Modal>
+      <LoanDetailModal detailOpen={detailOpen} setDetailOpen={setDetailOpen} loanTransactions={loanTransactions} handleViewDetails={handleViewDetails} setLoanUpdated={setLoanUpdated} loan={loan} />
     </Row>
   );
 };

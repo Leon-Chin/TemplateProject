@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
 import { createNewLoan } from "../../../api/loan.api";
-import { formatDateToMalaysia } from "../../../utils/convertDate";
 import { useSelector } from "react-redux";
-import { Select, Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message } from "antd";
+import { Select, Col, Modal, Row, Space, Button, InputNumber, DatePicker, Form, Input, message, Card } from "antd";
 import { DownOutlined, FileOutlined, UpOutlined, UploadOutlined } from "@ant-design/icons";
 import COLORS from "../../../constants/COLORS";
 import OneLoanCard from "./OneLoanCard";
@@ -41,7 +40,7 @@ const AllLoanRecords = ({ getAllData, allLoans, setLoanUpdated }) => {
     <>
       <Row>
         <Col span={24}>
-          <div style={{ width: "100%", backgroundColor: "#fff", padding: 10, borderRadius: 10 }}>
+          <Card bodyStyle={{ width: "100%", padding: 10, borderRadius: 10 }}>
             <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ fontWeight: "bold", fontSize: 18 }}>
                 <FileOutlined /> Total {allLoans.length} Loans{" "}
@@ -76,7 +75,7 @@ const AllLoanRecords = ({ getAllData, allLoans, setLoanUpdated }) => {
                 ))}
               </Space>
             )}
-          </div>
+          </Card>
         </Col>
       </Row>
       <Modal
