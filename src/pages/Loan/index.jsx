@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Col, Row, Space, Empty } from "antd";
+import { Col, Row, Space, Empty, Card } from "antd";
 import ReactEcharts from "echarts-for-react";
 
 import { getAllLoansByUser, getLoanDataForYear, calculateTotalToRepay, calculateTotalToReceive } from "../../api/loan.api";
@@ -8,9 +8,11 @@ import { SimplePieChartOption } from "../../utils/SimplePieChartOption";
 import LoanLineChartOption from "./utils/LoanLineChartOption";
 import LoanBalances from "./components/LoanBalances";
 import AllLoanRecords from "./components/AllLoanRecords";
+import useUserTheme from '../../hooks/useUserTheme';
 
 function Loan() {
   const { user } = useSelector((state) => state.user);
+  const theme = useUserTheme();
   const [loans, setLoans] = useState([]);
   const [totalToRepay, setTotalToRepay] = useState();
   const [totalToReceive, setTotalToReceive] = useState();
@@ -135,33 +137,33 @@ function Loan() {
         <LoanBalances totalToRepay={totalToRepay} totalToReceive={totalToReceive} />
         <Row>
           <Col span={24}>
-            <div style={{ width: "100%", padding: "20px 10%", backgroundColor: "#fff", height: 300, borderRadius: 10 }}>
+            <Card style={{ width: "100%", height: 300, borderRadius: 10, }}>
               {loanDataForYear.length > 0 ? (
-                <ReactEcharts option={generateLineChartOptions(loanDataForYear, "Monthly Loan Overview")} />
+                <ReactEcharts option={generateLineChartOptions(loanDataForYear, "Monthly Loan Overview")} theme={theme} />
               ) : (
                 <Empty description={"No loan data available for this year"} />
               )}
-            </div>
+            </Card>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <div style={{ width: "100%", padding: "20px 10%", backgroundColor: "#fff", height: 300, borderRadius: 10 }}>
+            <Card style={{ width: "100%", padding: '20px 10%', borderRadius: 10, }}>
               {loanDataForChartGiven.length > 0 ? (
-                <ReactEcharts option={generateChartOptions("GIVEN", loanDataForChartGiven)} theme={"light"} />
+                <ReactEcharts option={generateChartOptions("GIVEN", loanDataForChartGiven)} theme={theme} />
               ) : (
                 <Empty description={"No GIVEN loan data available"} />
               )}
-            </div>
+            </Card>
           </Col>
           <Col span={12}>
-            <div style={{ width: "100%", padding: "20px 10%", backgroundColor: "#fff", height: 300, borderRadius: 10 }}>
+            <Card style={{ width: "100%", padding: '20px 10%', borderRadius: 10, }}>
               {loanDataForChartTaken.length > 0 ? (
-                <ReactEcharts option={generateChartOptions("TAKEN", loanDataForChartTaken)} theme={"light"} />
+                <ReactEcharts option={generateChartOptions("TAKEN", loanDataForChartTaken)} theme={theme} />
               ) : (
                 <Empty description={"No TAKEN loan data available"} />
               )}
-            </div>
+            </Card>
           </Col>
         </Row>
       </Space>
