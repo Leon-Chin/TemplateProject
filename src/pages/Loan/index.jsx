@@ -41,6 +41,7 @@ function Loan() {
       const res = await getAllLoansByUser(userId);
       if (res && res.status !== false) {
         setLoans(res);
+        console.log(res)
         const loanDataGiven = generateLoanData(res, "GIVEN");
         const loanDataTaken = generateLoanData(res, "TAKEN");
         setLoanDataForChartGiven(generateChartData(loanDataGiven));
@@ -120,6 +121,9 @@ function Loan() {
 
   useEffect(() => {
     const userId = user.id;
+    getLoans(userId);
+    getTotalToRepay(userId);
+    getTotalToReceive(userId);
     fetchLoanDataForYear(userId, new Date().getFullYear());
     setLoanUpdated(false);
   }, [loanUpdated]);
