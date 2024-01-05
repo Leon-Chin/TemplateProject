@@ -11,6 +11,11 @@ import {
   getCategorySummaryByMonth,
   getExpensesByMonth,
 } from "../../api/statistics.api";
+import {
+  getAllExpensesByMonth,
+  getAllExpensesByDay,
+} from "../../api/expense.api";
+import { getAllExpenseCategory } from "../../api/setting.api";
 import ReactEcharts from "echarts-for-react";
 import { SimplePieChartOption } from "../../utils/SimplePieChartOption";
 import { SimpleBarChartOption } from "../../utils/SimpleBarChartOption";
@@ -18,6 +23,7 @@ import SimpleLineChartOption from "../../utils/SimpleLineChartOption";
 import { Space, Empty, Card, Tabs, DatePicker } from "antd";
 import useUserTheme from "../../hooks/useUserTheme";
 import dayjs from "dayjs";
+import AllExpensesRecords from "./components/AllExpensesRecords";
 
 export default function StatisticBoard() {
   const { user } = useSelector((state) => state.user);
@@ -25,6 +31,7 @@ export default function StatisticBoard() {
   const { TabPane } = Tabs;
 
   const [overallStats, setOverallStats] = useState();
+  const [allCategories, setAllCategories] = useState([]);
 
   //overall tab
   const [categorySummary, setCategorySummary] = useState();
@@ -37,11 +44,13 @@ export default function StatisticBoard() {
   const [categorySummaryByMonth, setCategorySummaryByMonth] = useState();
   const [monthlyTotalSpent, setMonthlyTotalSpent] = useState(0);
   const [expensesByMonth, setExpensesByMonth] = useState();
+  const [monthlyExpenses, setMonthlyExpenses] = useState([]);
 
   //daily tab
   const [dailySelectedDate, setDailySelectedDate] = useState(dayjs());
   const [categorySummaryByDay, setCategorySummaryByDay] = useState();
   const [dailyTotalSpent, setDailyTotalSpent] = useState(0);
+  const [dailyExpenses, setDailyExpenses] = useState([]);
 
   const getOverall = async (userId) => {
     await getOverallSummary(userId, {
@@ -68,12 +77,40 @@ export default function StatisticBoard() {
     });
   };
 
+  const getAllCategory = async () => {
+    await getAllExpenseCategory(user.id).then((res) => {
+      if (res && res.status !== false) {
+        setAllCategories(res);
+      }
+    });
+  };
+
   const getMonthly = async (userId) => {
     await getMonthlySummary(userId, {
       year: parseInt(monthlySummaryYear),
     }).then((res) => {
       if (res && res.status !== false) {
         setMonthlySummary(res);
+      }
+    });
+  };
+
+  const getMonthlyExpenses = async (userId) => {
+    await getAllExpensesByMonth(userId, {
+      date: monthlySelectedDate.format("DD-MM-YYYY"),
+    }).then((res) => {
+      if (res && res.status !== false) {
+        setMonthlyExpenses(res);
+      }
+    });
+  };
+
+  const getDailyExpenses = async (userId) => {
+    await getAllExpensesByDay(userId, {
+      date: dailySelectedDate.format("DD-MM-YYYY"),
+    }).then((res) => {
+      if (res && res.status !== false) {
+        setDailyExpenses(res);
       }
     });
   };
@@ -185,6 +222,9 @@ export default function StatisticBoard() {
     await getCategoryByDay(userId);
     await getCategoryByMonth(userId);
     await getByMonth(userId);
+    await getAllCategory(userId);
+    await getMonthlyExpenses(userId);
+    await getDailyExpenses(userId);
   };
 
   useEffect(() => {
@@ -209,6 +249,7 @@ export default function StatisticBoard() {
     //refetch
     getCategoryByMonth(user.id);
     getByMonth(user.id);
+    getMonthlyExpenses(user.id);
   }, [monthlySelectedDate]);
 
   //daily
@@ -219,6 +260,7 @@ export default function StatisticBoard() {
   useEffect(() => {
     //refetch
     getCategoryByDay(user.id);
+    getDailyExpenses(user.id);
   }, [dailySelectedDate]);
 
   const onPieChartChange = (_date, dateString) => {
@@ -331,28 +373,8 @@ export default function StatisticBoard() {
             </div>
           </TabPane>
           <TabPane tab="Monthly" key="2">
-            <div
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "1rem",
-              }}
-            >
-              <Card
-                style={{
-                  width: 350,
-                  padding: "20px",
-                  borderRadius: 10,
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+            <div className="statistic-overview">
+              <Card className="statistic-overview-left">
                 <Card
                   title={`Total Spent (${monthlySelectedDate.format("MMM")})`}
                   bordered={true}
@@ -367,7 +389,10 @@ export default function StatisticBoard() {
                     ? `$${parseFloat(monthlyTotalSpent).toFixed(2)}`
                     : "--"}
                 </Card>
-                <CalendarForm handleDateChange={handleMonthlyDateSelection} mode="year" />
+                <CalendarForm
+                  handleDateChange={handleMonthlyDateSelection}
+                  mode="year"
+                />
               </Card>
               <div
                 style={{
@@ -439,32 +464,17 @@ export default function StatisticBoard() {
                     <Empty description={"No data available to show"} />
                   )}
                 </Card>
+                <AllExpensesRecords
+                  allExpenses={monthlyExpenses}
+                  allCategories={allCategories}
+                  getAllData={getAllData}
+                />
               </div>
             </div>
           </TabPane>
           <TabPane tab="Daily" key="3">
-            <div
-              style={{
-                width: "100%",
-                borderRadius: 10,
-                display: "flex",
-                flexDirection: "row", // Set to column direction
-                justifyContent: "space-between",
-                gap: "1rem",
-              }}
-            >
-              <Card
-                style={{
-                  width: 350,
-                  padding: "20px",
-                  borderRadius: 10,
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+            <div className="statistic-overview">
+              <Card className="statistic-overview-left">
                 <Card
                   title="Total Spent"
                   bordered={true}
@@ -481,37 +491,53 @@ export default function StatisticBoard() {
                 </Card>
                 <CalendarForm handleDateChange={handleDailyDateSelection} />
               </Card>
-              <Card
+              <div
                 style={{
                   width: "100%",
-                  padding: "20px 10%",
                   height: "100%",
                   borderRadius: 10,
-                  ...(categorySummaryByDay
-                    ? {}
-                    : {
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }),
+                  gap: "1rem",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                {categorySummaryByDay && categorySummaryByDay.length > 0 ? (
-                  <ReactEcharts
-                    option={generateChartOptions(
-                      "Category By Day",
-                      categorySummaryByDay
-                    )}
-                    theme={theme}
-                  />
-                ) : (
-                  <Empty
-                    description={
-                      "No category summary available, try creating an expense"
-                    }
-                  />
-                )}
-              </Card>
+                <Card
+                  style={{
+                    width: "100%",
+                    padding: "20px 10%",
+                    height: "100%",
+                    borderRadius: 10,
+                    ...(categorySummaryByDay
+                      ? {}
+                      : {
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }),
+                  }}
+                >
+                  {categorySummaryByDay && categorySummaryByDay.length > 0 ? (
+                    <ReactEcharts
+                      option={generateChartOptions(
+                        "Category By Day",
+                        categorySummaryByDay
+                      )}
+                      theme={theme}
+                    />
+                  ) : (
+                    <Empty
+                      description={
+                        "No category summary available, try creating an expense"
+                      }
+                    />
+                  )}
+                </Card>
+                <AllExpensesRecords
+                  allExpenses={dailyExpenses}
+                  allCategories={allCategories}
+                  getAllData={getAllData}
+                />
+              </div>
             </div>
           </TabPane>
         </Tabs>

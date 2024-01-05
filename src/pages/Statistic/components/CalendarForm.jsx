@@ -19,7 +19,8 @@ const CalendarForm = ({ handleDateChange, mode }) => {
   return (
       <div
         style={{
-          width: 300,
+          minWidth: 300,
+          maxWidth: "100%",
           borderRadius: "20px"
         }}
       >
