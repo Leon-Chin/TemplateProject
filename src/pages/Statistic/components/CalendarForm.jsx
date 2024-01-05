@@ -2,7 +2,7 @@ import { Alert, Calendar } from "antd";
 import { useState } from "react";
 import dayjs from "dayjs";
 
-const CalendarForm = ({ handleDateChange }) => {
+const CalendarForm = ({ handleDateChange, mode }) => {
   const [value, setValue] = useState(dayjs());
   const [selectedValue, setSelectedValue] = useState(dayjs());
   
@@ -31,6 +31,7 @@ const CalendarForm = ({ handleDateChange }) => {
           onSelect={onSelect}
           // headerRender={null}
           onPanelChange={onPanelChange}
+          mode={mode}
         />
       </div>
   );

@@ -15,8 +15,7 @@ import ReactEcharts from "echarts-for-react";
 import { SimplePieChartOption } from "../../utils/SimplePieChartOption";
 import { SimpleBarChartOption } from "../../utils/SimpleBarChartOption";
 import SimpleLineChartOption from "../../utils/SimpleLineChartOption";
-import { Space, Empty, Card, Tabs } from "antd";
-import { DatePicker } from "antd";
+import { Space, Empty, Card, Tabs, DatePicker } from "antd";
 import useUserTheme from "../../hooks/useUserTheme";
 import dayjs from "dayjs";
 
@@ -368,7 +367,7 @@ export default function StatisticBoard() {
                     ? `$${parseFloat(monthlyTotalSpent).toFixed(2)}`
                     : "--"}
                 </Card>
-                <CalendarForm handleDateChange={handleMonthlyDateSelection} />
+                <CalendarForm handleDateChange={handleMonthlyDateSelection} mode="year" />
               </Card>
               <div
                 style={{

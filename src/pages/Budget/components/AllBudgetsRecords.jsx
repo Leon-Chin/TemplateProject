@@ -33,7 +33,7 @@ const AllBudgetsRecords = ({ getAllData, allBudgets }) => {
                     <Card bodyStyle={{ width: "100%", padding: 10, borderRadius: 10, }}>
                         <div style={{ width: "100%", display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
                             <div style={{ fontWeight: 'bold', fontSize: 18 }}>
-                                <FileOutlined /> Total {allBudgets.length} Budgts {collapsed ? <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Collapsed <UpOutlined /></span> : <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Expand <DownOutlined /></span>}
+                                <FileOutlined /> Total {allBudgets.length} Budgets {collapsed ? <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Collapsed <UpOutlined /></span> : <span className='hoverButton' style={{ fontSize: 14, fontWeight: 'normal', marginLeft: 8 }} onClick={() => setCollapsed(!collapsed)}>Expand <DownOutlined /></span>}
                             </div>
                             <div className='hoverButton' onClick={() => setCreateOpen(true)} style={{ userSelect: 'none', borderRadius: 10, padding: 10, backgroundColor: COLORS.primary, color: 'white' }}>Create Budget <UploadOutlined /></div>
                         </div>
