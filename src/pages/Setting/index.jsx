@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewExpenseCategory, deleteAllData, deleteExpenseCategory, exportAllData, getAllExpenseCategory, updateExpenseCategory } from '../../api/setting.api'
-import { Button, Card, Col, Input, List, Modal, Radio, Row, Switch, Typography, message } from 'antd'
+import { Button, Card, Col, Input, List, Modal, Popconfirm, Radio, Row, Switch, Typography, message } from 'antd'
 import { DeleteOutlined, EditOutlined, ExportOutlined, PlusOutlined } from '@ant-design/icons'
 import useUserTheme from '../../hooks/useUserTheme'
 import { setUserTheme } from '../../store/user.store'
@@ -32,7 +32,7 @@ function Setting() {
     const deleteCategory = async (id) => {
         await deleteExpenseCategory(id).then(res => {
             if (res && res.status !== false) {
-                console.log(res);
+                getAllCategory()
             }
         })
     }
@@ -53,22 +53,20 @@ function Setting() {
     const [updateModalOpen, setUpdateModalOpen] = useState(false)
     const [selectedCategory, setselectedCategory] = useState()
     const [categoryName, setCategoryName] = useState('')
-
     const dispatch = useDispatch()
     const currentTheme = useUserTheme()
-
 
     const handleExport = async () => {
         await exportAllData(user.id).then(res => {
             if (res && res.status !== false) {
-                console.log(res);
+                message.success('Exported successfully at "Downloads/savings.csv"')
             }
         })
     }
     const handleDeleteAll = async () => {
         await deleteAllData(user.id).then(res => {
             if (res && res.status !== false) {
-                console.log(res);
+                message.success('Delete Succuessfully')
             }
         })
     }
@@ -92,11 +90,26 @@ function Setting() {
                                     {item.category_name}
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                    <div onClick={() => {
-                                        setselectedCategory(item)
-                                        setUpdateModalOpen(true)
-                                    }}><EditOutlined /></div>
-                                    <div onClick={() => deleteCategory(item.id)}><DeleteOutlined /></div>
+                                    <div
+                                        className='hoverButton'
+                                        onClick={() => {
+                                            setselectedCategory(item)
+                                            setUpdateModalOpen(true)
+                                        }}>
+                                        <EditOutlined />
+                                    </div>
+                                    <Popconfirm
+                                        title="Delete"
+                                        description="Are you sure to delete this category?"
+                                        onConfirm={() => deleteCategory(item.id)}
+                                        onCancel={() => { }}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
+                                        <div className='hoverButton'>
+                                            <DeleteOutlined />
+                                        </div>
+                                    </Popconfirm>
                                 </div>
                             </div>
                         </List.Item>
@@ -111,9 +124,18 @@ function Setting() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card>
-                        <div className='hoverButton' onClick={() => handleDeleteAll()}><DeleteOutlined /> Delete All Data</div>
-                    </Card>
+                    <Popconfirm
+                        title="Delete"
+                        description="Are you sure to delete all your data?"
+                        onConfirm={() => handleDeleteAll()}
+                        onCancel={() => { }}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Card>
+                            <div className='hoverButton'><DeleteOutlined /> Delete All Data</div>
+                        </Card>
+                    </Popconfirm>
                 </Col>
                 <Col span={8}>
                     <Card>
@@ -128,7 +150,6 @@ function Setting() {
                 onCancel={() => setAddModalOpen(false)}
                 onOk={() => setAddModalOpen(false)}
             >
-
                 <div style={{ paddingTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{ width: 160 }}>
                         Category Name:
@@ -140,19 +161,21 @@ function Setting() {
                 </div>
             </Modal>
             <UpdateCategoryModal refresh={getAllCategory} open={updateModalOpen} setOpen={setUpdateModalOpen} selectedCategory={selectedCategory} />
-        </div>
+        </div >
     )
 }
 
 const UpdateCategoryModal = ({ open, setOpen, selectedCategory, refresh }) => {
     const { user } = useSelector(state => state.user)
-    const [updatedCategoryName, setUpdatedCategoryName] = useState('')
+    const [updatedCategoryName, setUpdatedCategoryName] = useState(selectedCategory?.category_name)
+    useEffect(() => {
+        selectedCategory?.category_name && setUpdatedCategoryName(selectedCategory.category_name)
+    }, [selectedCategory?.category_name])
     const updateCategory = async () => {
         if (updatedCategoryName) {
             const data = { category_name: updatedCategoryName, user_id: user.id }
             await updateExpenseCategory(selectedCategory.id, data).then(res => {
                 if (res && res.status !== false) {
-                    console.log(res);
                     setOpen(false)
                     refresh()
                 }
@@ -172,7 +195,7 @@ const UpdateCategoryModal = ({ open, setOpen, selectedCategory, refresh }) => {
             <div style={{ width: 160 }}>
                 Category Name:
             </div>
-            <Input placeholder="Input Category Name" defaultValue={selectedCategory?.category_name} onChange={(e) => setUpdatedCategoryName(e.target.value)} />
+            <Input placeholder="Input Category Name" value={updatedCategoryName} onChange={(e) => setUpdatedCategoryName(e.target.value)} />
         </div>
         <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Button onClick={() => updateCategory()} type='primary'>Update</Button>
