@@ -171,7 +171,13 @@ const LoanDetailModal = ({ detailOpen, setDetailOpen, loanTransactions, loan, ha
           <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.isRecurring !== currentValues.isRecurring}>
             {({ getFieldValue }) => {
               return getFieldValue("isRecurring") ? (
-                <Form.Item labelCol={{ span: 12 }} wrapperCol={{ span: 16 }} label="Frequency" name={"transactionFrequency"}>
+                <Form.Item labelCol={{ span: 12 }} wrapperCol={{ span: 16 }} label="Frequency" name={"transactionFrequency"}
+                    rules={[
+                      {
+                          required: recordForm.getFieldValue("isRecurring"),
+                          message: "Please select a frequency!",
+                      },
+                  ]}>
                   <Select>
                     <Option value="DAILY">Daily</Option>
                     <Option value="WEEKLY">Weekly</Option>

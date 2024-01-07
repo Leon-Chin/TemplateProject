@@ -56,6 +56,7 @@ function Loan() {
 
   const getTotalToRepay = async (userId) => {
     await calculateTotalToRepay(userId).then((res) => {
+      console.log(res);
       if (res && res.status !== false) {
         setTotalToRepay(res);
       } else {
@@ -66,6 +67,7 @@ function Loan() {
 
   const getTotalToReceive = async (userId) => {
     await calculateTotalToReceive(userId).then((res) => {
+      console.log(res);
       if (res && res.status !== false) {
         setTotalToReceive(res);
       } else {
