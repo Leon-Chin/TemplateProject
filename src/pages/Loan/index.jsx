@@ -58,6 +58,8 @@ function Loan() {
     await calculateTotalToRepay(userId).then((res) => {
       if (res && res.status !== false) {
         setTotalToRepay(res);
+      } else {
+        setTotalToRepay(null);
       }
     });
   };
@@ -66,6 +68,8 @@ function Loan() {
     await calculateTotalToReceive(userId).then((res) => {
       if (res && res.status !== false) {
         setTotalToReceive(res);
+      } else {
+        setTotalToReceive(null);
       }
     });
   };
