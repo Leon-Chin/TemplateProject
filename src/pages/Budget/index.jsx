@@ -83,7 +83,7 @@ function Budget() {
                     </Col>
                     <Col span={12}>
                         <Card style={{ width: "100%", height: 300, borderRadius: 10, }}>
-                            {monthlyBalance ? monthlyBalance && Object.keys(monthlyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(monthlyBalance), Object.values(dailyBalance), "Monthly Balance")} theme={theme} />
+                            {monthlyBalance ? monthlyBalance && Object.keys(monthlyBalance) !== 0 && <ReactEcharts option={SimpleLineChartOption(Object.keys(monthlyBalance), Object.values(monthlyBalance), "Monthly Balance")} theme={theme} />
                                 : <Empty description={"Don't have the this month's budget"} />}
                         </Card>
                     </Col>
