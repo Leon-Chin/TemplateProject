@@ -22,12 +22,12 @@ function Saving() {
         })
     }
 
-    const getAllCategories = async () => {
-        await getExpenseCategories().then(res => {
-            if (res && res.status !== false) {
-                setAllCategories(res)
-            }
-        })
+    const getAllCategories = async (userId) => {
+        await getExpenseCategories(userId).then((res) => {
+          if (res && res.status !== false) {
+            setAllCategories(res);
+          }
+        });
     }
 
     const getAllSavingTotalByCategories = async (userId) => {
@@ -41,7 +41,7 @@ function Saving() {
     const getAllData = () => {
         const userId = user.id
         getAllSavings(userId)
-        getAllCategories()
+        getAllCategories(userId)
         getAllSavingTotalByCategories(userId)
     }
 
