@@ -41,6 +41,7 @@ function Setting() {
         const data = { category_name: categoryName, user_id: user.id }
         await createNewExpenseCategory(data).then(res => {
             if (res && res.status !== false) {
+                setCategoryName('')
                 setAddModalOpen(false)
                 getAllCategory()
             }
