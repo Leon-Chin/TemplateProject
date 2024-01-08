@@ -33,14 +33,15 @@ export default function MyLayoutHeader() {
     const [updatePasswordModelOpen, setUpdatePasswordModelOpen] = useState(false)
     const handleUpdate = async (values) => {
         const { updatedPassword } = values
+        console.log("updatedPassword", updatedPassword);
         if (updatedPassword && updatedPassword.length > 5) {
-            const req = { email, passord: updatedPassword }
+            const req = { email, password: updatedPassword }
             await updatePassword(id, req).then(res => {
                 if (res && res.status !== false) {
-                    dispatch(setUser(res))
+                    message.success("Update password successfully!")
+                    // dispatch(setUser(res))
                     setUpdatePasswordModelOpen(false)
                     form.resetFields();
-                    message.success("Update password successfully!")
                 } else {
                     message.error("error")
                 }
