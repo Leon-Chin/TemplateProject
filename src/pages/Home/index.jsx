@@ -63,6 +63,7 @@ function Home() {
     getOverall(userId);
     getAllExpenses(userId);
     getAllCategory(userId);
+    getMonthly(userId);
   };
 
   useEffect(() => {
