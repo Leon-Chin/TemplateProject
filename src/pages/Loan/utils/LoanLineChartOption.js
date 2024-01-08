@@ -3,7 +3,7 @@ import COLORS from "../../../constants/COLORS";
 
 const colors = [COLORS.red, COLORS.green, COLORS.primary]; // Add more colors if needed
 
-const LoanLineChartOption = (xArr, yArrs, titles, title) => {
+const LoanLineChartOption = (xArr, yArrs, titles, title, boundaryColor) => {
   const series = yArrs.map((yArr, index) => {
     let yarr = yArr.map((element) => element || 0);
     return {
@@ -20,7 +20,7 @@ const LoanLineChartOption = (xArr, yArrs, titles, title) => {
             },
             {
               offset: 1,
-              color: "#fff", // 100% 处的颜色
+              color: boundaryColor ? boundaryColor : "#fff", // 100% 处的颜色
             },
           ]), //背景渐变色
         },

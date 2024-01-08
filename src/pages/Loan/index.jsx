@@ -115,7 +115,7 @@ function Loan() {
     const takenData = loanData.map((item) => item.taken);
     const balanceData = loanData.map((item) => item.balance);
 
-    return LoanLineChartOption(xData, [givenData, takenData, balanceData], ["Given", "Taken", "Balance"], titles);
+    return LoanLineChartOption(xData, [givenData, takenData, balanceData], ["Given", "Taken", "Balance"], titles, theme === "light" ? "#fff" : "#000");
   };
 
   useEffect(() => {

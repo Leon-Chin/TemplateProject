@@ -60,7 +60,7 @@ function Setting() {
     const handleExport = async () => {
         await exportAllData(user.id).then(res => {
             if (res && res.status !== false) {
-                message.success('Exported successfully at "Downloads/savings.csv"')
+                message.success('Exported successfully at "Downloads/"')
             }
         })
     }

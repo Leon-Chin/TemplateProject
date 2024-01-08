@@ -9,5 +9,8 @@ export const signIn = (data) => request('post', '/user/login', data);
 //     password:
 // }
 
+export const updatePassword = (userID, data) => request('put', `/user/update-password/${userID}/`, data);
+
+
 
 
